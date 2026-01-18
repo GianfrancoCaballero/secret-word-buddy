@@ -3,12 +3,16 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 // Allowed origins for CORS - restrict to deployment domains
+// Add your Vercel domain here when deploying externally
 const ALLOWED_ORIGINS = [
   'https://tychxbzcoqjhyrkgphxw.lovableproject.com',
   'https://lovable.dev',
   'http://localhost:8080',
   'http://localhost:8081',
   'http://localhost:5173',
+  // Vercel domains - uncomment and update when deploying:
+  // 'https://tu-app.vercel.app',
+  // 'https://tu-dominio-personalizado.com',
 ];
 
 const getCorsHeaders = (origin: string | null) => {
