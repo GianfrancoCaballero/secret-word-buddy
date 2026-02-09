@@ -10,6 +10,7 @@ interface OnlineGameProps {
 }
 
 export default function OnlineGame({ onGoHome }: OnlineGameProps) {
+  const { t } = useLanguage();
   const {
     state,
     setPlayerName,
