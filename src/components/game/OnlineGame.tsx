@@ -102,7 +102,7 @@ export default function OnlineGame({ onGoHome }: OnlineGameProps) {
   // Fallback while loading
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <p className="text-muted-foreground">Cargando...</p>
+      <p className="text-muted-foreground">{t.common.loading}</p>
     </div>
   );
 }
