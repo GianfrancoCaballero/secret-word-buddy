@@ -351,4 +351,13 @@ export const translations = {
   },
 } as const;
 
-export type Translations = typeof translations['es'];
+// Use a broader type that both languages satisfy
+type TranslationStrings = {
+  [K in keyof typeof translations['es']]: {
+    [K2 in keyof typeof translations['es'][K]]: typeof translations['es'][K][K2]  extends (...args: any[]) => string
+      ? (...args: any[]) => string
+      : string;
+  };
+};
+
+export type Translations = TranslationStrings;
