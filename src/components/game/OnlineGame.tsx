@@ -1,4 +1,5 @@
 import { useOnlineGame } from '@/hooks/useOnlineGame';
+import { useLanguage } from '@/i18n/LanguageContext';
 import OnlineLobby from './OnlineLobby';
 import WaitingRoom from './WaitingRoom';
 import OnlineRoleReveal from './OnlineRoleReveal';
@@ -9,6 +10,7 @@ interface OnlineGameProps {
 }
 
 export default function OnlineGame({ onGoHome }: OnlineGameProps) {
+  const { t } = useLanguage();
   const {
     state,
     setPlayerName,
@@ -100,7 +102,7 @@ export default function OnlineGame({ onGoHome }: OnlineGameProps) {
   // Fallback while loading
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <p className="text-muted-foreground">Cargando...</p>
+      <p className="text-muted-foreground">{t.common.loading}</p>
     </div>
   );
 }
