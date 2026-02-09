@@ -1,4 +1,5 @@
 import { useOnlineGame } from '@/hooks/useOnlineGame';
+import { useLanguage } from '@/i18n/LanguageContext';
 import OnlineLobby from './OnlineLobby';
 import WaitingRoom from './WaitingRoom';
 import OnlineRoleReveal from './OnlineRoleReveal';
