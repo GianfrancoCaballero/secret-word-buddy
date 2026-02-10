@@ -24,6 +24,7 @@ export default function OnlineGame({ onGoHome }: OnlineGameProps) {
     confirmRole,
     newRound,
     leaveRoom,
+    kickPlayer,
     refreshPlayers,
     canStartGame,
   } = useOnlineGame();
@@ -69,6 +70,7 @@ export default function OnlineGame({ onGoHome }: OnlineGameProps) {
         onStartGame={startGame}
         onLeaveRoom={handleLeaveRoom}
         onRefreshPlayers={refreshPlayers}
+        onKickPlayer={kickPlayer}
       />
     );
   }
