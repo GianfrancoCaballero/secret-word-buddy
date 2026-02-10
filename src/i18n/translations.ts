@@ -134,6 +134,9 @@ export const translations = {
       startGame: 'Iniciar Partida',
       starting: 'Iniciando...',
       waitingHost: 'Esperando a que el host inicie la partida...',
+      kickPlayer: 'Expulsar',
+      kickConfirm: '¿Expulsar jugador?',
+      kickDesc: (name: string) => `¿Estás seguro de que quieres expulsar a ${name} de la sala?`,
     },
     // OnlineRoleReveal
     onlineReveal: {
@@ -307,6 +310,9 @@ export const translations = {
       startGame: 'Start Game',
       starting: 'Starting...',
       waitingHost: 'Waiting for the host to start the game...',
+      kickPlayer: 'Kick',
+      kickConfirm: 'Kick player?',
+      kickDesc: (name: string) => `Are you sure you want to kick ${name} from the room?`,
     },
     onlineReveal: {
       yourRole: (name: string) => `Your Role, ${name}`,

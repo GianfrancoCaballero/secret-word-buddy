@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, X, Users, Copy, Check, Crown, Play, HelpCircle, FileSpreadsheet, FolderOpen, Loader2, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Plus, X, Users, Copy, Check, Crown, Play, HelpCircle, FileSpreadsheet, FolderOpen, Loader2, RefreshCw, UserX } from 'lucide-react';
 import { useExcelImport } from '@/hooks/useExcelImport';
 import { useWordCategories } from '@/hooks/useWordCategories';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -27,11 +27,12 @@ interface WaitingRoomProps {
   onStartGame: () => Promise<{ error?: string; success?: boolean }>;
   onLeaveRoom: () => void;
   onRefreshPlayers: () => void;
+  onKickPlayer: (targetPlayerId: string) => void;
 }
 
 export default function WaitingRoom({
   roomCode, players, words, impostorCount, isHost, canStart,
-  onAddWord, onAddWords, onRemoveWord, onSetImpostorCount, onStartGame, onLeaveRoom, onRefreshPlayers,
+  onAddWord, onAddWords, onRemoveWord, onSetImpostorCount, onStartGame, onLeaveRoom, onRefreshPlayers, onKickPlayer,
 }: WaitingRoomProps) {
   const [newWord, setNewWord] = useState('');
   const [copied, setCopied] = useState(false);
@@ -118,8 +119,27 @@ export default function WaitingRoom({
           <CardContent>
             <div className="flex flex-wrap gap-2">
               {players.map((player) => (
-                <Badge key={player.player_id} variant={player.is_host ? 'default' : 'secondary'} className="text-sm py-1 px-3">
+                <Badge key={player.player_id} variant={player.is_host ? 'default' : 'secondary'} className="text-sm py-1 px-3 flex items-center gap-1">
                   {player.is_host && <Crown className="w-3 h-3 mr-1" />}{player.player_name}
+                  {isHost && !player.is_host && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <button className="ml-1 hover:text-destructive" title={t.waiting.kickPlayer}>
+                          <UserX className="w-3 h-3" />
+                        </button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>{t.waiting.kickConfirm}</AlertDialogTitle>
+                          <AlertDialogDescription>{t.waiting.kickDesc(player.player_name)}</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>{t.waiting.cancel}</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => onKickPlayer(player.player_id)}>{t.waiting.kickPlayer}</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
                 </Badge>
               ))}
             </div>

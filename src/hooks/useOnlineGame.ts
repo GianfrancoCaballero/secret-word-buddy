@@ -490,19 +490,29 @@ export function useOnlineGame() {
     }
   }, [state.roomId, state.isHost, state.playerId, state.playerSecret]);
 
+  const kickPlayer = useCallback(async (targetPlayerId: string) => {
+    if (!state.roomId || !state.isHost || !state.playerSecret) return;
+
+    try {
+      await callGameAction(state.playerId, state.playerSecret, 'kick_player', {
+        roomId: state.roomId,
+        targetPlayerId,
+      });
+    } catch {
+      // Error kicking player - handled silently
+    }
+  }, [state.roomId, state.isHost, state.playerId, state.playerSecret]);
+
   const leaveRoom = useCallback(async () => {
     if (!state.roomId) return;
 
-    // All room mutations must go through Edge Function (RLS blocks direct access)
     if (state.playerSecret) {
       try {
         if (state.isHost) {
-          // Host deletes the entire room
           await callGameAction(state.playerId, state.playerSecret, 'delete_room', {
             roomId: state.roomId,
           });
         } else {
-          // Non-host leaves via Edge Function
           await callGameAction(state.playerId, state.playerSecret, 'leave_room', {
             roomId: state.roomId,
           });
@@ -512,7 +522,6 @@ export function useOnlineGame() {
         }
     }
 
-    // Clear stored secret
     clearPlayerSecret(state.roomId);
 
     setState(prev => ({
@@ -546,6 +555,7 @@ export function useOnlineGame() {
     confirmRole,
     newRound,
     leaveRoom,
+    kickPlayer,
     refreshPlayers,
     canStartGame,
   };

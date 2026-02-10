@@ -93,7 +93,8 @@ const RATE_LIMITS: Record<string, RateLimitConfig> = {
   start_game: { maxRequests: 5, windowMs: 60000 }, // 5 per minute
   update_room: { maxRequests: 30, windowMs: 60000 }, // 30 per minute
   delete_room: { maxRequests: 5, windowMs: 60000 }, // 5 per minute
-  leave_room: { maxRequests: 10, windowMs: 60000 }, // 10 per minute
+      leave_room: { maxRequests: 10, windowMs: 60000 }, // 10 per minute
+      kick_player: { maxRequests: 20, windowMs: 60000 }, // 20 per minute
   new_round: { maxRequests: 10, windowMs: 60000 }, // 10 per minute
   get_my_word: { maxRequests: 30, windowMs: 60000 }, // 30 per minute
   get_players: { maxRequests: 60, windowMs: 60000 }, // 60 per minute
@@ -204,7 +205,7 @@ serve(async (req) => {
     }
 
     // Actions that require room membership and secret verification
-    const securedActions = ['start_game', 'new_round', 'update_room', 'delete_room', 'get_my_word', 'leave_room'];
+    const securedActions = ['start_game', 'new_round', 'update_room', 'delete_room', 'get_my_word', 'leave_room', 'kick_player'];
     
     if (securedActions.includes(action)) {
       if (!playerSecret) {
@@ -509,6 +510,43 @@ serve(async (req) => {
         }
 
         console.log(`Player ${playerId} left room ${roomId}`);
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      case 'kick_player': {
+        await validateHost(roomId, playerId);
+
+        const targetPlayerId = params.targetPlayerId;
+        if (!targetPlayerId || typeof targetPlayerId !== 'string') {
+          return new Response(
+            JSON.stringify({ error: 'Target player ID required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        // Cannot kick yourself
+        if (targetPlayerId === playerId) {
+          return new Response(
+            JSON.stringify({ error: 'Cannot kick yourself' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const { error: kickError } = await supabase
+          .from('room_players')
+          .delete()
+          .eq('room_id', roomId)
+          .eq('player_id', targetPlayerId);
+
+        if (kickError) {
+          console.error('Error kicking player:', kickError);
+          throw new Error('Failed to kick player');
+        }
+
+        console.log(`Player ${targetPlayerId} kicked from room ${roomId} by host ${playerId}`);
         return new Response(
           JSON.stringify({ success: true }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
