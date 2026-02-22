@@ -383,11 +383,12 @@ serve(async (req) => {
             .eq('id', players[i].id);
         }
 
-        // Update room status and store sanitized words
+        // Update room status - do NOT store current_word in plaintext (security: visible via Realtime WS)
+        // The word is already stored securely in room_players.assigned_word per player
         await supabase
           .from('game_rooms')
           .update({ 
-            current_word: randomWord,
+            current_word: null,
             words: sanitizedWords,
             status: 'playing',
           })
