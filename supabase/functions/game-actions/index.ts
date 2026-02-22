@@ -10,9 +10,7 @@ const ALLOWED_ORIGINS = [
   'http://localhost:8080',
   'http://localhost:8081',
   'http://localhost:5173',
-  // Vercel domains - uncomment and update when deploying:
-  // 'https://tu-app.vercel.app',
-  // 'https://tu-dominio-personalizado.com',
+  'https://secret-word-buddy.vercel.app',
 ];
 
 const getCorsHeaders = (origin: string | null) => {
